@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+
+# Python virtual environment
+.venv/
+venv/
+__pycache__/
+
+# Build output
+build/
+dist/
+.svelte-kit/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# SQLite database
+*.db
+*.sqlite
+*.sqlite3
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Coverage
+coverage/
+
+# Temporary files
+tmp/
+temp/
+
+# Google サービスアカウントキー（絶対にコミットしない）
+credentials/
+
+# Claude Code ローカル設定（個人情報含む可能性あり）
+.claude/settings.local.json
+
+# トークンリフレッシュ一時ファイル（絶対にコミットしない）
+new_token.txt
+
+# 秘密鍵・証明書ファイル
+*.pem
+*.key
+*.p12

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(scripts/**)",
+      "Read(.github/**)",
+      "Read(docs/**)"
+    ]
+  }
+}
