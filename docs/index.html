@@ -178,15 +178,15 @@ body::before{
 /* ─── 中央エリア ─── */
 .pc-center{display:flex;flex-direction:column;align-items:center;text-align:center;padding:8px 30px 0;gap:7px;flex:1;position:relative;z-index:2;width:100%}
 
-/* 寮の紋章画像 */
-.pc-animal{width:88px;height:100px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+/* エージェント画像 */
+.pc-animal{width:88px;height:88px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .pc-animal img{
-  width:100%;height:100%;object-fit:contain;
-  filter:drop-shadow(0 0 8px var(--card-glow,rgba(212,175,55,0.35))) drop-shadow(0 2px 6px rgba(0,0,0,0.5));
-  transition:filter .3s, transform .3s;
+  width:100%;height:100%;object-fit:cover;border-radius:50%;
+  box-shadow:0 0 0 2px var(--card-accent,var(--gold-dim)),0 0 12px var(--card-glow,rgba(212,175,55,0.35));
+  transition:box-shadow .3s, transform .3s;
 }
 .card:hover .pc-animal img{
-  filter:drop-shadow(0 0 18px var(--card-glow,rgba(212,175,55,0.7))) drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+  box-shadow:0 0 0 2px var(--card-accent,var(--gold-dim)),0 0 24px var(--card-glow,rgba(212,175,55,0.7));
   transform:scale(1.06);
 }
 .pc-animal img.floating{animation:float 2.2s ease-in-out infinite}
@@ -446,6 +446,20 @@ let agentNames={
 };
 let systemName="エージェントホグワーツ";
 
+// エージェントキー → 画像ファイルのマッピング
+const AGENT_IMAGES={
+  hermione:"images/hermione.jpg",
+  luna:    "images/luna.jpg.png",
+  malfoy:  "images/malfoy.jpg.png",
+  snape:   "images/snape.jpg.png",
+  ron_post:"images/ron.jpg.png",
+  ron_fetch:"images/ron.jpg.png",
+  human:   "images/gryffindor.svg",
+};
+function getAgentImage(a){
+  return AGENT_IMAGES[a.key]||`images/${a.house}.svg`;
+}
+
 // エージェントキー → 表示名の変換（ron_post/ron_fetch はどちらも ron キーを参照）
 function getAgentDisplayName(a){
   if(a.key==="ron_post") return agentNames.ron||a.name;
@@ -527,7 +541,7 @@ function renderGrid(sts={}){
       </div>
       <div class="pc-center">
         <div class="pc-animal">
-          <img src="images/${a.house}.svg" alt="${a.house} crest" class="${isRun?"floating":""}" loading="lazy">
+          <img src="${getAgentImage(a)}" alt="${getAgentDisplayName(a)}" class="${isRun?"floating":""}" loading="lazy">
         </div>
         <div class="pc-name">${getAgentDisplayName(a)}</div>
         <div class="pc-role">${a.role}</div>
