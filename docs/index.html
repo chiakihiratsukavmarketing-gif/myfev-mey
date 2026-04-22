@@ -463,7 +463,10 @@ async function loadAgentNames(){
     );
     if(!r.ok)return;
     const data=await r.json();
-    const decoded=JSON.parse(atob(data.content.replace(/\n/g,"")));
+    const binary=atob(data.content.replace(/\n/g,""));
+    const bytes=new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+    const decoded=JSON.parse(new TextDecoder('utf-8').decode(bytes));
     Object.assign(agentNames,Object.fromEntries(
       Object.entries(decoded).filter(([k])=>!k.startsWith("_"))
     ));
