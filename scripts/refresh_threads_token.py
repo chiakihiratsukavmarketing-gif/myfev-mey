@@ -81,9 +81,10 @@ def main():
             f.write(new_token)
         logger.info("new_token.txt に保存しました（GitHub Actionsが読み取ります）")
     finally:
-        # ローカル実行時は即座に削除（GitHub Actions上ではworkflow側でrm -fする）
-        import atexit
-        atexit.register(lambda: os.path.exists(token_path) and os.remove(token_path))
+        # ローカル実行時のみ削除（GitHub Actions上ではworkflow側のrm -fで削除）
+        if not os.getenv("GITHUB_ACTIONS"):
+            import atexit
+            atexit.register(lambda: os.path.exists(token_path) and os.remove(token_path))
     logger.info("=== リフレッシュ完了 ===")
 
 
