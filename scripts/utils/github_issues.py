@@ -115,6 +115,29 @@ class GitHubIssues:
                 except GithubException as e:
                     logger.warning(f"ラベル作成スキップ: {name} ({e})")
 
+    _ISSUE_CACHE_PATH = "/tmp/today_issue_cache.txt"
+
+    def _read_cached_issue(self, today: str):
+        """同一ランナー内でハーマイオニーが書いたIssue番号を読む"""
+        try:
+            with open(self._ISSUE_CACHE_PATH, encoding="utf-8") as f:
+                date_str, num_str = f.read().strip().split(":")
+            if date_str == today:
+                issue = self.repo.get_issue(int(num_str))
+                logger.info(f"キャッシュからIssueを取得: #{issue.number}")
+                return issue
+        except Exception:
+            pass
+        return None
+
+    def _write_cached_issue(self, today: str, issue_number: int):
+        """Issue番号を同一ランナー内の後続スクリプトのためにキャッシュする"""
+        try:
+            with open(self._ISSUE_CACHE_PATH, "w", encoding="utf-8") as f:
+                f.write(f"{today}:{issue_number}")
+        except Exception:
+            pass
+
     def get_or_create_today_issue(self) -> object:
         """
         本日の運用ループIssueを取得または作成する。
@@ -123,15 +146,21 @@ class GitHubIssues:
         today = datetime.now(JST).strftime("%Y-%m-%d")
         title_prefix = f"【運用ループ】{today}"
 
-        # 既存のIssueを探す（ラベルフィルタなし＋リトライでAPI遅延に対応）
-        for attempt in range(4):
+        # 同一ランナー内のキャッシュを最優先で確認（API遅延を完全回避）
+        cached = self._read_cached_issue(today)
+        if cached:
+            return cached
+
+        # APIで検索（ラベルフィルタなし）
+        for attempt in range(3):
             issues = self.repo.get_issues(state="open")
             for issue in issues:
                 if issue.title.startswith(title_prefix):
                     logger.info(f"既存のIssueを使用: #{issue.number}")
+                    self._write_cached_issue(today, issue.number)
                     return issue
-            if attempt < 3:
-                logger.info(f"既存Issue未検出、10秒後にリトライ ({attempt + 1}/3)")
+            if attempt < 2:
+                logger.info(f"既存Issue未検出、10秒後にリトライ ({attempt + 1}/2)")
                 time.sleep(10)
 
         # パイプライン初期状態（全て待機中）
@@ -159,6 +188,7 @@ class GitHubIssues:
             labels=[label],
         )
         logger.info(f"新規Issue作成: #{new_issue.number}")
+        self._write_cached_issue(today, new_issue.number)
         return new_issue
 
     def update_pipeline_status(
