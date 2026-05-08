@@ -39,7 +39,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TODAY=$(TZ=Asia/Tokyo date +%Y-%m-%d)
-          TITLE=$(gh api "repos/${{ github.repository }}/issues?labels=daily-operation&state=all&per_page=5" \
+          TITLE=$(gh api "repos/${{ github.repository }}/issues?labels=daily-operation&state=open&per_page=5" \
             --jq ".[] | select(.title | contains(\"$TODAY\")) | .title" 2>/dev/null || echo "")
           if [ -n "$TITLE" ]; then
             echo "should_run=SKIP" >> "$GITHUB_OUTPUT"
