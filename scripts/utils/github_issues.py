@@ -4,6 +4,7 @@ GitHub Issuesをエージェント間の外部メモリとして操作するユ�
 """
 
 import re
+import time
 from datetime import datetime, timezone, timedelta
 from github import Github, GithubException
 from loguru import logger
@@ -122,12 +123,16 @@ class GitHubIssues:
         today = datetime.now(JST).strftime("%Y-%m-%d")
         title_prefix = f"【運用ループ】{today}"
 
-        # 既存のIssueを探す
-        issues = self.repo.get_issues(state="open", labels=[self.DAILY_OP_LABEL])
-        for issue in issues:
-            if issue.title.startswith(title_prefix):
-                logger.info(f"既存のIssueを使用: #{issue.number}")
-                return issue
+        # 既存のIssueを探す（GitHub API キャッシュ対策: 最大3回リトライ）
+        for attempt in range(3):
+            issues = self.repo.get_issues(state="open", labels=[self.DAILY_OP_LABEL])
+            for issue in issues:
+                if issue.title.startswith(title_prefix):
+                    logger.info(f"既存のIssueを使用: #{issue.number}")
+                    return issue
+            if attempt < 2:
+                logger.info(f"既存Issue未検出、5秒後にリトライ ({attempt + 1}/2)")
+                time.sleep(5)
 
         # パイプライン初期状態（全て待機中）
         initial_statuses = {key: ("waiting", "-") for key, _, _ in PIPELINE_STEPS}
