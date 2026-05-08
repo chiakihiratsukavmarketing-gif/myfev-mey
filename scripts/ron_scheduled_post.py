@@ -31,6 +31,7 @@ GOOGLE_CREDENTIALS_PATH = os.getenv("GOOGLE_CREDENTIALS_PATH", "credentials/shee
 THREADS_API_BASE        = "https://graph.threads.net/v1.0"
 
 SLOT_LABELS = {
+    1: "🌅 15時・昼投稿",
     2: "🌆 18時・夕方投稿",
     3: "🌙 21時・夜投稿",
 }
@@ -135,8 +136,8 @@ def find_approved_issue(gh: GitHubIssues) -> object:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--slot", type=int, required=True, choices=[2, 3],
-        help="スロット番号（2=18時, 3=21時）"
+        "--slot", type=int, required=True, choices=[1, 2, 3],
+        help="スロット番号（1=15時, 2=18時, 3=21時）"
     )
     args = parser.parse_args()
 
@@ -153,7 +154,7 @@ def main():
 
     # Python側の投稿済みチェック（yml側チェックとの2重防止）
     # yml側のgrepがコメント形式にマッチしない場合の保険
-    slot_keyword = "18時" if args.slot == 2 else "21時"
+    slot_keyword = {1: "15時", 2: "18時", 3: "21時"}[args.slot]
     comments_for_check = gh.get_comments(issue.number)
     already_posted = any(
         slot_keyword in c.body and "投稿完了" in c.body

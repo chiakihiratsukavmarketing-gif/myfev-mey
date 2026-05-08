@@ -35,19 +35,12 @@ jobs:
       - name: Install dependencies
         run: pip install -r scripts/requirements.txt
 
-      - name: Post SLOT_1 immediately
+      - name: Confirm approval received
         env:
-          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
-          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPO: ${{ github.repository }}
-          SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
-          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
         run: |
-          # サービスアカウントJSONをリポジトリルートのcredentials/に書き出す
-          if [ -n "$GOOGLE_CREDENTIALS_JSON" ]; then
-            mkdir -p credentials
-            echo "$GOOGLE_CREDENTIALS_JSON" > credentials/sheets_service_account.json
-            export GOOGLE_CREDENTIALS_PATH=credentials/sheets_service_account.json
-          fi
-          cd scripts && python ron_post.py
+          curl -s -X POST \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"body": "✅ 承認を受け付けました。SLOT_1は15時に自動投稿されます。"}' \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments"
