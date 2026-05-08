@@ -50,4 +50,4 @@ jobs:
             echo "$GOOGLE_CREDENTIALS_JSON" > credentials/sheets_service_account.json
             export GOOGLE_CREDENTIALS_PATH=credentials/sheets_service_account.json
           fi
-          python scripts/ron_post.py
+          cd scripts && python ron_post.py
