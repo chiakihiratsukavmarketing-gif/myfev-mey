@@ -9,7 +9,6 @@ on:
 
 permissions:
   contents: read
-  secrets: write
 
 jobs:
   refresh-threads-token:
@@ -38,7 +37,7 @@ jobs:
 
       - name: Update GitHub Secret with new token
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           NEW_TOKEN=$(cat new_token.txt)
           gh secret set THREADS_ACCESS_TOKEN --body "$NEW_TOKEN"
