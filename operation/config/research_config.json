@@ -2,7 +2,7 @@
   "_comment": "ハーマイオニーのリサーチ設定。あなたのThreadsアカウントのジャンルに合わせて自由に変更してください。",
   "_howto": "変更後はClaude Codeを再起動するか、次回の /run-daily-cycle から自動で反映されます。",
 
-  "topic_genre": "AI・テクノロジー",
+  "topic_genre": "AI・テクノロジー / SNS運用・運用代行",
 
   "youtube_channel_ids": [
     "UCfapRkagDtoQEkGeyD3uERQ",
@@ -23,13 +23,18 @@
     "AIエージェント Threads 活用",
     "Claude Code SNS自動化 実例",
     "AIエージェント 自動投稿 運用",
-    "Threads 運用 効率化 AI"
+    "Threads 運用 効率化 AI",
+    "SNS運用代行 始め方 フリーランス",
+    "Threads SNS運用 伸ばし方",
+    "SNS運用 副業 収益化"
   ],
 
   "rss_feeds": [
     "https://feeds.feedburner.com/oreilly/radar",
     "https://machinelearningmastery.com/feed/",
     "https://venturebeat.com/category/ai/feed/",
-    "https://www.marktechpost.com/feed/"
+    "https://www.marktechpost.com/feed/",
+    "https://www.socialmediatoday.com/rss.xml",
+    "https://buffer.com/resources/feed/"
   ]
 }
