@@ -17,7 +17,7 @@ jobs:
       contains(github.event.comment.body, '承認') &&
       !contains(github.event.comment.body, '申請') &&
       github.event.comment.user.type != 'Bot' &&
-      (github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'COLLABORATOR')
+      (github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'COLLABORATOR' || github.event.comment.author_association == 'MEMBER')
     runs-on: ubuntu-latest
     timeout-minutes: 10
 

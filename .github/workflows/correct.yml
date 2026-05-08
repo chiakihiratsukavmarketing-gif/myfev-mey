@@ -16,7 +16,7 @@ jobs:
       contains(github.event.issue.labels.*.name, 'daily-operation') &&
       startsWith(github.event.comment.body, '修正:') &&
       github.event.comment.user.type != 'Bot' &&
-      (github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'COLLABORATOR')
+      (github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'COLLABORATOR' || github.event.comment.author_association == 'MEMBER')
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
