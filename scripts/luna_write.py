@@ -62,9 +62,10 @@ def load_voice_definition() -> str:
 
 def extract_persona_name(voice_def: str) -> str:
     """声定義からキャラ名を動的に抽出する"""
-    m = re.search(r'\*{0,2}キャラ名\*{0,2}[：:]\s*(.+)', voice_def)
-    if m:
-        return m.group(1).strip().strip('*')
+    for pattern in [r'\*{0,2}キャラ名\*{0,2}[：:]\s*(.+)', r'\*{0,2}名前\*{0,2}[：:]\s*(.+)']:
+        m = re.search(pattern, voice_def)
+        if m:
+            return m.group(1).strip().strip('*')
     return "キャラクター"
 
 
