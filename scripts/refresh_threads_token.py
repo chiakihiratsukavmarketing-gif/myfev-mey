@@ -37,25 +37,12 @@ def refresh_token(current_token: str) -> str:
 
 
 def update_github_secret(new_token: str):
-    """GitHub Actions SecretのTHREADS_ACCESS_TOKENを更新する"""
+    """GitHub Actions SecretのTHREADS_ACCESS_TOKENを更新する（gh CLIで処理）"""
     if not GITHUB_TOKEN or not GITHUB_REPO:
         logger.warning("GITHUB_TOKEN / GITHUB_REPO が未設定。GitHub Secretの自動更新をスキップします。")
         logger.info("手動でGitHub Secrets を更新してください: THREADS_ACCESS_TOKEN")
         return
-
-    from github import Github
-    g    = Github(GITHUB_TOKEN)
-    repo = g.get_repo(GITHUB_REPO)
-
-    try:
-        # GitHub Secrets はAPIで更新可能（要admin権限）
-        # 暗号化が必要なため libsodium が必要 → 手動更新を案内
-        logger.info("GitHub Secretsの自動更新には追加ライブラリが必要です。")
-        logger.info("以下の手順で手動更新してください:")
-        logger.info(f"  1. https://github.com/{GITHUB_REPO}/settings/secrets/actions")
-        logger.info(f"  2. THREADS_ACCESS_TOKEN を新しい値に更新")
-    except Exception as e:
-        logger.error(f"GitHub Secret更新エラー: {e}")
+    logger.info("GitHub Secretsの更新はワークフロー内の gh secret set で処理されます。")
 
 
 def main():
