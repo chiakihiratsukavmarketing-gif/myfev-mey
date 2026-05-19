@@ -113,6 +113,15 @@ def check_approved(issue_number: int, gh: GitHubIssues) -> bool:
     )
 
 
+def check_slot_rejected(issue_number: int, gh: GitHubIssues, slot_num: int) -> bool:
+    """最新の承認コメントにSLOT_n却下が含まれる場合はTrueを返す"""
+    comments = gh.get_comments(issue_number)
+    for c in reversed(comments):
+        if "承認" in c.body and c.user.type != "Bot" and "申請" not in c.body:
+            return f"SLOT_{slot_num}却下" in c.body
+    return False
+
+
 def find_approved_issue(gh: GitHubIssues) -> object:
     """当日→前日の順で承認済みIssueを検索する（cron遅延による日付またぎ対策）"""
     JST = timezone(timedelta(hours=9))
@@ -151,6 +160,11 @@ def main():
     if issue is None:
         logger.info("承認済みのIssueが見つかりません（当日・前日を検索済み）。投稿をスキップします。")
         sys.exit(0)  # exit(0)=正常終了でcronを維持（exit(1)はGitHubがcronを自動無効化する）
+
+    # スロット別却下チェック（「承認（SLOT_n却下）」コメントがある場合はスキップ）
+    if check_slot_rejected(issue.number, gh, args.slot):
+        logger.info(f"SLOT_{args.slot}は却下されています。投稿をスキップします。")
+        sys.exit(0)
 
     # Python側の投稿済みチェック（yml側チェックとの2重防止）
     # yml側のgrepがコメント形式にマッチしない場合の保険

@@ -12,10 +12,12 @@ permissions:
 jobs:
   post:
     # daily-operationラベルのIssueへのコメントで、「承認」を含み、Botでなく、「申請」を含まない場合のみ実行
+    # 「SLOT_1却下」が含まれる場合はSLOT_1をスキップ（cron側のron_scheduled_post.pyが却下を検知する）
     if: |
       contains(github.event.issue.labels.*.name, 'daily-operation') &&
       contains(github.event.comment.body, '承認') &&
       !contains(github.event.comment.body, '申請') &&
+      !contains(github.event.comment.body, 'SLOT_1却下') &&
       github.event.comment.user.type != 'Bot' &&
       (github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'COLLABORATOR' || github.event.comment.author_association == 'MEMBER')
     runs-on: ubuntu-latest
